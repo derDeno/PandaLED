@@ -21,8 +21,11 @@
 </head>
 
 <body>
-  <div id="container">
+  <!-- Particles -->
+  <div id="particles"></div>
 
+  <!-- Content -->
+  <div class="container">
     <div class="center">
       <img src="assets/icon.svg" alt="PandaLED Logo" class="logo">
 
@@ -45,14 +48,15 @@
           </div>
         </span>
       </esp-web-install-button>
-    </div>
 
+    </div>
   </div>
+
 
   <script src="assets/particles.min.js"></script>
   <script>
     /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
-    particlesJS.load('container', 'assets/particles.json', function() {});
+    particlesJS.load('particles', 'assets/particles.json', function() {});
   </script>
 </body>
 
