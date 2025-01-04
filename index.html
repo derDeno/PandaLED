@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Some stats to understand how the installer is being used. Thank you!  -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=GTM-WQHPS55H"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'GTM-WQHPS55H');
+  </script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>PandaLED Installer</title>
+  <script type="module" src="https://unpkg.com/esp-web-tools@8.0.1/dist/web/install-button.js?module">
+  </script>
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+
+    <div class="mb-3">
+      <esp-web-install-button id="button_web_install" manifest="manifest.json">
+        <button type="button" class="btn btn-primary" slot="activate">Connect to device </button>
+        <span slot="not-allowed">
+          <div class="alert alert-dismissible alert-danger"><button type="button" class="btn-close"
+              data-bs-dismiss="alert"></button><strong>Not Allowed</strong>
+            <div>Flashing is only supported from the local host or from a secure web site.</div>
+          </div>
+        </span>
+        <span slot="notsupported">
+          <div class="alert alert-dismissible alert-danger"><button type="button" class="btn-close"
+              data-bs-dismiss="alert"></button><strong>Browser Not Supported</strong> <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API#browser_compatibility">Make
+              sure you are using a compatible browser</a></div>
+        </span>
+      </esp-web-install-button>
+    </div>
+
+  </div>
+
+  <script src="assets/particles.min.js"></script>
+  <script>
+    /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
+    particlesJS.load('container', 'assets/particles.json', function () {
+      console.log('callback - particles.js config loaded');
+    });
+  </script>
+</body>
+
+</html>

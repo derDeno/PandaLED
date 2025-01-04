@@ -1,0 +1,13 @@
+{
+  "name": "PandaLED rev 1.5",
+  "version": "0.1.4",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "firmware/firmware.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
