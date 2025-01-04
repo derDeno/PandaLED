@@ -55,8 +55,11 @@
 
   <script src="assets/particles.min.js"></script>
   <script>
-    /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
     particlesJS.load('particles', 'assets/particles.json', function() {});
+
+    window.addEventListener('resize', function() {
+      particlesJS.load('particles', 'assets/particles.json', function() {});
+  });
   </script>
 </body>
 
