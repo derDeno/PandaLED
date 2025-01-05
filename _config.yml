@@ -26,20 +26,7 @@ exclude:
   - vendor/gems/
   - vendor/ruby/
   # specific to the theme website:
-  - bin/
-  - lib/
-  - "*.gemspec"
-  - "*.gem"
-  - LICENSE.txt
-  - package.json
-  - package-lock.json
-  - Rakefile
   - README.md
-  - CODE_OF_CONDUCT.md
-  - docker-compose.yml
-  - Dockerfile
-  # theme test code
-  - fixtures/
   # flasher
   - firmware/
   - web-install.html
