@@ -7,10 +7,7 @@ repository: derDeno/PandaLED
 permalink: pretty
 
 defaults:
-  - scope:
-      path: "docs"
-      type: "pages"
-    values:
+  - values:
       layout: "default"
 
 exclude:
