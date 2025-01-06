@@ -1,5 +1,6 @@
 title: PandaLED Docs
 description: Documentation for the PandaLED project.
+theme: just-the-docs
 baseurl: ""
 url: "https://derdeno.github.io/PandaLED"
 repository: derDeno/PandaLED
