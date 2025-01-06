@@ -8,4 +8,4 @@ nav_order: 8
 You can activate in the [Device Settings](https://github.com/derDeno/BLWLED/wiki/Device-Settings#logging) the "Debug logging" option to log whats happening to a log file.
 On the "Log" page you have the log printed and have the option to delete it or download the file.
 
-![](../../assets/img/logging.png)
+![](../assets/img/logging.png)

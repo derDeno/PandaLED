@@ -1,5 +1,5 @@
 # PandaLED Installer
 
-This is a installer website for [PandaLED](https://github.com/derDeno/PandaLED).
+This is the docs and web installer website for PandaLED.
 
-[Visit installer website](https://derdeno.github.io/PandaLED/)
+[Visit documentation and web installer](https://derdeno.github.io/PandaLED/)
