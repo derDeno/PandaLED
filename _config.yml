@@ -25,13 +25,6 @@ exclude:
   - vendor/ruby/
   # specific to the theme website:
   - README.md
-  # flasher
-  #- firmware/
-  #- web-install.html
-  #- assets/particles.json
-  #- assets/particles.min.js
-  #- assets/manifest_rev_1-5.json
-  #- assets/style.css
 
 # Site settings
 logo: "/assets/icon.svg"
