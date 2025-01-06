@@ -26,7 +26,7 @@ exclude:
   # specific to the theme website:
   - README.md
 
-# Site settings
+
 logo: "/assets/icon.svg"
 
 search_enabled: true
@@ -57,8 +57,8 @@ nav_sort: case_sensitive
 nav_external_links:
   - title: Web installer
     url: https://derdeno.github.io/PandaLED/web-installer.html
-
 nav_error_report: true 
+
 liquid:
   error_mode: strict
   strict_filters: true
@@ -66,7 +66,8 @@ liquid:
 back_to_top: true
 back_to_top_text: "Back to top"
 
-footer_content: 'Copyright &copy; 2024-2025 DNO. Distributed by an <a href="https://github.com/derDeno/PandaLED/tree/main/LICENSE">Creative Commons Attribution-NonCommercial-ShareAlike license.</a>'
+footer_content: 'Copyright &copy; 2024-2025 DNO. Distributed by an <a href="https://github.com/derDeno/PandaLED/tree/main/LICENSE">CC BY-NC-SA 4.0 license.</a>'
+nav_footer_content: '&nbsp;'
 
 last_edit_timestamp: true # show or hide edit time - page must have `last_modified_date` defined in the frontmatter
 last_edit_time_format: "%b %e %Y at %I:%M %p" # uses ruby's time format: https://ruby-doc.org/stdlib-2.7.0/libdoc/time/rdoc/Time.html
@@ -89,10 +90,10 @@ callouts:
     color: blue
   new:
     title: New
-    color: green
+    color: purple
   note:
     title: Note
-    color: purple
+    color: green
   warning:
     title: Warning
     color: red
