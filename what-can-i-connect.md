@@ -28,4 +28,4 @@ The GPIO pin layout looks like the following when you look at it from the top:
 | Ground | VP | VN | IO 34 | IO 35 | IO 32 | Ground | VCC (12V/24V) |
 
 
-![](../../assets/img/gpio%20pins.png)
+![](../assets/img/gpio%20pins.png)
