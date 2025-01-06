@@ -30,6 +30,7 @@ exclude:
   - web-install.html
   - assets/particles.json
   - assets/particles.min.js
+  - assets/manifest_rev_1-5.json
   - assets/style.css
 
 # Site settings

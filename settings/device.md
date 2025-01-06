@@ -32,4 +32,4 @@ Activate this option to log whats happening to log file. For more details, look 
 Here you can reset your device to factory settings. This will delete all changes made by you.
 <br><br>
 
-![](/assets/img/device-settings.png)
+![](../../assets/img/device-settings.png)
