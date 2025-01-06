@@ -108,7 +108,6 @@ callouts:
 # ga_tracking_anonymize_ip: true
 
 plugins:
-  - jekyll-seo-tag
   - jekyll-github-metadata
   - jekyll-include-cache
   - jekyll-sitemap
