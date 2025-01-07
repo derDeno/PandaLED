@@ -7,7 +7,7 @@ nav_order: 1
 {: .fs-9 }
 
 If you want to go straight to the web installer, just press the button below. 
-Otherwise getting started is a good way to start
+Otherwise follow the getting started guide.
 {: .fs-6 .fw-300 }
 
 [Web installer](https://derdeno.github.io/PandaLED/web-installer.html){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
