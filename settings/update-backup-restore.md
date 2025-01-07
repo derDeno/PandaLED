@@ -7,7 +7,7 @@ nav_order: 5
 # Update, Backup & Restore
 
 On this page you have the option to update your board using over the air using a firmware file found under releases, download a backup file of your settings and also to restore these settings.
-<br><br>
+<br>
 
 ## Update order
 If there is an update to the firmware and filesystem, it is important to update the filesystem first and then the firmware. If there is no filesystem update, just update the firmware.
@@ -27,7 +27,7 @@ This is mainly the WebUI files.
 
 
 ## Backup
-This generates a <i>.pandaled</i> which contains all your settings. You can use this to backup your settings if you plan to reset the device or upload it to a new board.
+This generates a _.pandaled_ file, which contains all your settings. You can use this to backup your settings if you plan to reset the device or upload it to a new board.
 This is basically a json file.
 
 

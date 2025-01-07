@@ -11,6 +11,8 @@ The table below shows where to find the informations.
 
 **DON'T FORGET TO SAVE YOUR CHANGES!**
 
+
+
 | Value           | X1                          | P1                          |
 |-----------------|-----------------------------|-----------------------------|
 | IP Address      | Settings > Network          | Settings > WLAN             |
