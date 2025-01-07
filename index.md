@@ -39,10 +39,11 @@ Furthermore the exposed GPIO pins allow you to connect more things to the board 
 ## Where can I get this board?
 Currently the board is in its final development phase and therefore not purchasable.
 But I plan to provide a way to preorder the board in the near future.
+If you don't want to miss any updates, please join our [Discord](https://discord.gg/8VhnsCXKun)
 
 The whole project is open source, so you can modify it how ever you like.
 
 
 ## How can I support this project?
 This project is currently sponsored by JLCPCB, but can also be supported by anyone else.
-If you want to support this project, please reach out to my on Discord [here](https://discord.gg/8VhnsCXKun) or help improving the code here on [GitHub](https://github.com/derDeno/PandaLED).
+If you want to support this project, please reach out to me on Discord [here](https://discord.gg/8VhnsCXKun) or help improving the code here on [GitHub](https://github.com/derDeno/PandaLED).
