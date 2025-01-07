@@ -50,8 +50,8 @@ heading_anchors: true
 aux_links:
   "PandaLED on GitHub":
     - "https://github.com/derDeno/PandaLED"
-
 aux_links_new_tab: false
+
 nav_enabled: true
 nav_sort: case_sensitive
 nav_external_links:
@@ -67,7 +67,6 @@ back_to_top: true
 back_to_top_text: "Back to top"
 
 footer_content: 'Copyright &copy; 2024-2025 DNO. Distributed by an <a href="https://github.com/derDeno/PandaLED/tree/main/LICENSE">CC BY-NC-SA 4.0 license.</a>'
-nav_footer_content: '&nbsp;'
 
 last_edit_timestamp: true # show or hide edit time - page must have `last_modified_date` defined in the frontmatter
 last_edit_time_format: "%b %e %Y at %I:%M %p" # uses ruby's time format: https://ruby-doc.org/stdlib-2.7.0/libdoc/time/rdoc/Time.html
@@ -79,7 +78,7 @@ gh_edit_branch: "gh-pages"
 gh_edit_source: docs
 gh_edit_view_mode: "tree"
 
-color_scheme: nil
+color_scheme: custom
 
 callouts_level: quiet
 callouts:
