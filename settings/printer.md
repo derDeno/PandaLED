@@ -8,6 +8,7 @@ nav_order: 2
 
 On this page you setup the connection to your Printer.
 The table below shows where to find the informations.
+
 **DON'T FORGET TO SAVE YOUR CHANGES!**
 
 | Value           | X1                          | P1                          |

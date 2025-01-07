@@ -17,3 +17,32 @@ Otherwise follow the getting started guide.
 
 {: .note }
 This documentation is for the current PandaLED rev. 1.5 board.
+
+
+## What is PandaLED?
+PandaLED is a control board for P1 and X1 Bambulab printers.
+It allows you to connect WLED, classic (analog) LED strips or anything else which uses 12V or 24V and not more then 3A.
+
+The board will control the connected devices depending on so called _events_. A full list of all available events can be found on the Mappings page.
+Using the WebUI you can define mappings, which is a simple but powerful way to map events to outputs.
+
+For example you can map a finished print event to the WLED output to turn the LEDs green and turn the off after 10 minutes.
+
+
+## What makes this project special?
+The biggest feature is the mapping tool. It provides you a very simple way to connect events with devices.
+You don't need to change anything in the firmware or any coding skills.
+
+Furthermore the exposed GPIO pins allow you to connect more things to the board or design a custom expansion board to expand the functionalities.
+
+
+## Where can I get this board?
+Currently the board is in its final development phase and therefore not purchasable.
+But I plan to provide a way to preorder the board in the near future.
+
+The whole project is open source, so you can modify it how ever you like.
+
+
+## How can I support this project?
+This project is currently sponsored by JLCPCB, but can also be supported by anyone else.
+If you want to support this project, please reach out to my on Discord [here](https://discord.gg/8VhnsCXKun).
