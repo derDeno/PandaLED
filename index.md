@@ -11,7 +11,7 @@ Otherwise follow the getting started guide.
 {: .fs-6 .fw-300 }
 
 [Web installer](https://derdeno.github.io/PandaLED/web-installer.html){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
-[Getting started](#getting-started){: .btn .fs-5 .mb-4 .mb-md-0 }
+[Getting started](https://derdeno.github.io/PandaLED/getting-started/){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ---
 
