@@ -45,5 +45,6 @@ The whole project is open source, so you can modify it how ever you like.
 
 
 ## How can I support this project?
+![](../assets/img/jlcpcb.png)
 This project is currently sponsored by JLCPCB, but can also be supported by anyone else.
 If you want to support this project, please reach out to me on Discord [here](https://discord.gg/8VhnsCXKun) or help improving the code here on [GitHub](https://github.com/derDeno/PandaLED).
