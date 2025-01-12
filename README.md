@@ -1,6 +1,6 @@
 # PandaLED Installer
 
-[![pages-deployment](https://github.com/derDeno/PandaLED/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/derDeno/PandaLED/actions/workflows/pages/pages-build-deployment)
+[![pages-build-deployment](https://github.com/derDeno/PandaLED/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages)](https://github.com/derDeno/PandaLED/actions/workflows/pages/pages-build-deployment)
 
 This is the docs and web installer website for PandaLED.
 
