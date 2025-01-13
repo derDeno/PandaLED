@@ -17,7 +17,7 @@ There are two methods to set up your device:
 ## Web Installer
 1. Install the CH340 drivers.
 2. Connect your PandaLED to your PC using a USB-C cable.
-3. Open the [web installer](https://derdeno.github.io/PandaLED/web-installer.html).
+3. Open the [Web Installer](https://derdeno.github.io/PandaLED/web-installer.html).
 4. Follow the on-screen instructions.
 
 

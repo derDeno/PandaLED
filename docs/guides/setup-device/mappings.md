@@ -13,5 +13,5 @@ This page allows you to:
 When uploading a new mapping file, this will overwrite all your existing mappings.
 :::
 
-### Screenshot
+## Screenshot
 ![](/img/mapping-settings.png)

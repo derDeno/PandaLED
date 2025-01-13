@@ -6,7 +6,7 @@ sidebar_position: 4
 # Debugging
 To facilitate troubleshooting, you can enable "Debug Logging" in the [Device Settings](setup-device/device). 
 This option records system events and activities into a log file.
-* * *
+
 
 ## Accessing Logs
 

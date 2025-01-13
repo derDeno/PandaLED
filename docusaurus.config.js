@@ -1,12 +1,4 @@
-// @ts-check
-// `@type` JSDoc annotations allow editor autocompletion and type checking
-// (when paired with `@ts-check`).
-// There are various equivalent ways to declare your Docusaurus config.
-// See: https://docusaurus.io/docs/api/docusaurus-config
-
 import {themes as prismThemes} from 'prism-react-renderer';
-
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -14,12 +6,8 @@ const config = {
   tagline: '',
   favicon: 'img/favicon.ico',
 
-  // Set the production url of your site here
   url: 'https://derdeno.github.io',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/PandaLED/',
-
   organizationName: 'derDeno',
   projectName: 'PandaLED',
 
@@ -67,9 +55,15 @@ const config = {
         items: [
           {
             type: 'docSidebar',
-            sidebarId: 'docsSidebar',
+            sidebarId: 'docs',
             position: 'left',
             label: 'Docs',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'guides',
+            position: 'left',
+            label: 'Guides',
           },
           {
             href: 'https://derdeno.github.io/PandaLED/web-installer.html',
@@ -78,35 +72,26 @@ const config = {
           },
           {
             href: 'https://github.com/derDeno/PandaLED',
-            label: 'GitHub',
-            position: 'left',
+            position: 'right',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository',
           },
         ],
       },
       footer: {
         style: 'dark',
-        links: [
-          {
-            title: 'Community',
-            items: [
-              {
-                label: 'Discord',
-                href: 'https://discord.gg/8VhnsCXKun',
-              },
-              {
-                label: 'Github',
-                href: 'https://github.com/derDeno/PandaLED',
-              },
-            ],
-          },
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} PandaLED. Distributed by an <a href="https://github.com/derDeno/PandaLED/tree/main/LICENSE">CC BY-NC-SA 4.0 license.</a>`,
+        links: [],
+        copyright: `Copyright © ${new Date().getFullYear()} PandaLED. Distributed by a <a href="https://github.com/derDeno/PandaLED/tree/main/LICENSE">CC BY-NC-SA 4.0 license.</a>`,
       },
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
       },
     }),
+
+  plugins: [
+    require.resolve('docusaurus-lunr-search')
+  ],
 };
 
 export default config;
