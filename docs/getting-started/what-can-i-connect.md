@@ -1,6 +1,6 @@
 ---
 title: What To Connect
-sidebar_position: 2
+sidebar_position: 3
 ---
 
 # What Can I Connect to the PandaLED
@@ -28,14 +28,10 @@ The Analog output port is a 6-pin connector capable of delivering either 12V or 
 - Usage: Designed for RGB CCT LED strips but can be repurposed for other devices due to PWM control or on/off switching capabilities
 - Pin Layout: Printed on the bottom side of the PCB
 
-:::danger
-Never use USB-C and DC at the same time. Only one power source at a time is supported. Otherwise you will damage the PCB!
-:::
-
 
 ## GPIO
 
-![](/img/gpio%20pins.png)
+![](/img/gpio-pins.png)
 
 The PCB includes a range of GPIO pins, enabling you to expand the board's functionality with additional features or extension boards. 
 The GPIO pin layout is as follows (viewed from the top):

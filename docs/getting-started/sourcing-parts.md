@@ -1,11 +1,19 @@
 ---
 title: Sourcing Parts
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 # Sourcing Parts
-Here you can find different parts and their sources:
+Here you can find different parts and where you can buy them.
+* * *
 
+### PandaLED Case
+Official PandaLED Case can be found either on Printables or MakerWorld.
+* [Printables](https://printables.com/)
+* [MakerWorld](https://makerworld.com/)
+
+If you want to design your own case, you can use the step file of the PCB to create your own case.
+* [step file](#)
 
 
 ### 3D Print files

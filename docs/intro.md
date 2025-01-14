@@ -13,6 +13,7 @@ Otherwise, follow the getting started guide.
 <br/><br/>
 * * *
 
+![](/img/pcb.png)
 
 ## What is PandaLED?
 PandaLED is a control board designed for P1 and X1 Bambulab printers. It allows you to connect WLED, classic (analog) LED strips, or any device operating on 12V or 24V with a maximum current of 3A.
