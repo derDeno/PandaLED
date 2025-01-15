@@ -27,6 +27,7 @@ const config = {
         docs: {
           routeBasePath: '/',
           sidebarPath: './sidebars.js',
+          showLastUpdateTime: true,
         },
         blog: false,
         theme: {

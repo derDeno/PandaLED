@@ -4,9 +4,29 @@ slug: /
 sidebar_position: 1
 ---
 
+<h1 align="center">PandaLED Docs</h1>
+
+<div align="center">
+    <img width="200" src={require('/img/logo.png').default} />
+</div>
+
+<div align="center">
+    ESP32 based controller for BambuLab Printer (P1/X1) to controll LEDs or other devices.
+
+    ![GitHub Release](https://img.shields.io/github/v/release/derDeno/BLWLED?style=for-the-badge&label=PandaLED&color=blueviolet)
+    <br/>
+
+    [![license](https://img.shields.io/badge/license-CC--BY--NC--SA--4.0-blue)](https://github.com/derDeno/PandaLED/blob/HEAD/LICENSE)
+    ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/derDeno/PandaLED)
+    [![prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+    [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/derDeno/PandaLED/blob/HEAD/CONTRIBUTING.md#pull-requests)
+    <br />
+
+</div>
+
 # Introduction
 If you want to go straight to the web installer, just press the button below. 
-Otherwise, follow the getting started guide.
+Otherwise, follow the getting started guide found in the sidebar.
 
 <br/>
 <Button label="Web Installer" size="lg" link="https://derdeno.github.io/PandaLED/web-installer.html" />
@@ -47,6 +67,6 @@ This project is currently sponsored by JLCPCB but welcomes additional support fr
 If you're interested in supporting this project, you can:
 
 - Reach out on Discord [here](https://discord.gg/8VhnsCXKun).
-- Contribute to the codebase on [GitHub](https://github.com/derDeno/PandaLED).
+- Contribute to the codebase on [GitHub](https://github.com/derDeno/PandaLED/blob/HEAD/CONTRIBUTING.md#pull-requests).
 
 Your contributions and support are greatly appreciated!
