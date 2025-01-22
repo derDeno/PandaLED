@@ -19,6 +19,7 @@ sidebar_position: 99
 
 
 ### Reset
+Remember this will erase all settings and reset the device to factory settings.
 
 
 ### Reboot

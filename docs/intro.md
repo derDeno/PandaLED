@@ -11,7 +11,7 @@ sidebar_position: 1
 </div>
 
 <div align="center">
-    ESP32 based controller for BambuLab Printer (P1/X1) to controll LEDs or other devices.
+    ESP32 based controller for Bambu Lab Printer (P1/X1) to controll LEDs or other devices.
 
     ![GitHub Release](https://img.shields.io/github/v/release/derDeno/BLWLED?style=for-the-badge&label=PandaLED&color=blueviolet)
     <br/>
@@ -36,7 +36,7 @@ Otherwise, follow the getting started guide found in the sidebar.
 ![](/img/pcb.png)
 
 ## What is PandaLED?
-PandaLED is a control board designed for P1 and X1 Bambulab printers. It allows you to connect WLED, classic (analog) LED strips, or any device operating on 12V or 24V with a maximum current of 3A.
+PandaLED is a control board designed for P1 and X1 Bambu Lab printers. It allows you to connect WLED, classic (analog) LED strips, or any device operating on 12V or 24V with a maximum current of 3A.
 
 The board controls connected devices based on events. A complete list of available events is provided on the Mappings page. Using the WebUI, you can define mappings, which provide a simple yet powerful way to associate events with outputs.
 

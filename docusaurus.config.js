@@ -1,4 +1,5 @@
 import {themes as prismThemes} from 'prism-react-renderer';
+import * as OpenApiPlugin from "docusaurus-plugin-openapi-docs";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -28,6 +29,7 @@ const config = {
           routeBasePath: '/',
           sidebarPath: './sidebars.js',
           showLastUpdateTime: true,
+          docItemComponent: "@theme/ApiItem",
         },
         blog: false,
         theme: {
@@ -91,8 +93,26 @@ const config = {
     }),
 
   plugins: [
-    require.resolve('docusaurus-lunr-search')
+    require.resolve('docusaurus-lunr-search'),
+    [
+      'docusaurus-plugin-openapi-docs',
+      {
+        id: "api",
+        docsPluginId: "classic",
+        config: {
+          petstore: {
+            specPath: "examples/petstore.yaml",
+            outputDir: "docs/petstore",
+            sidebarOptions: {
+              groupPathsBy: "tag",
+            },
+          },
+        }
+      },
+    ]
   ],
+
+  themes: ["docusaurus-theme-openapi-docs"],
 };
 
 export default config;
