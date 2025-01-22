@@ -11,7 +11,7 @@ sidebar_position: 1
 </div>
 
 <div align="center">
-    ESP32 based controller for Bambu Lab Printer (P1/X1) to controll LEDs or other devices.
+    ESP32 based controller for Bambu Lab Printer (P1/X1) to control LEDs or other devices.
 
     ![GitHub Release](https://img.shields.io/github/v/release/derDeno/BLWLED?style=for-the-badge&label=PandaLED&color=blueviolet)
     <br/>
