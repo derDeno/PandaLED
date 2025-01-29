@@ -1,6 +1,6 @@
 ---
 title: LED Test Page
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 # LED Test Page
