@@ -31,7 +31,7 @@ The Analog output port is a 6-pin connector capable of delivering either 12V or 
 
 ## GPIO
 
-![](/img/gpio-pins.png)
+![](/img/hw_gpio-pins.png)
 
 The PCB includes a range of GPIO pins, enabling you to expand the board's functionality with additional features or extension boards. 
 The GPIO pin layout is as follows (viewed from the top):
