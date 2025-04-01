@@ -45,4 +45,4 @@ This will delete all changes made by you.
 
 
 ## Screenshot
-![](/img/device-settings.png)
+![](/img/web_device-settings.png)

@@ -18,4 +18,4 @@ This option records system events and activities into a log file.
 
 Enabling debug logging is a helpful way to identify issues and understand what is happening within the system.
 
-![](/img/logging.png)
+![](/img/web_logging.png)

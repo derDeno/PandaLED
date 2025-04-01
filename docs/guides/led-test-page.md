@@ -24,4 +24,4 @@ The LED test page provides a convenient way to directly control the WLED or anal
 
 This tool simplifies testing and experimenting with your LED outputs directly from the interface.
 
-![](/img/led-test.png)
+![](/img/web_led-test.png)

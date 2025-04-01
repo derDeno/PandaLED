@@ -60,9 +60,10 @@ The entire project is open-source, giving you the freedom to modify it as you li
 
 
 ## How can I support this project?
-![](/img/jlcpcb.png)
+![](/img/sponsor_jlcpcb.png)
+![](/img/sponsor_easyeda.png)
 
-This project is currently sponsored by JLCPCB but welcomes additional support from the community. 
+This project is currently sponsored by JLCPCB / EasyEDA, but welcomes additional support from the community. 
 
 If you're interested in supporting this project, you can:
 

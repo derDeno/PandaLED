@@ -35,4 +35,4 @@ After entering and saving the values, press the Test Connection button to verify
 
 ## Screenshot
 
-![](/img/printer-settings.png)
+![](/img/web_printer-settings.png)

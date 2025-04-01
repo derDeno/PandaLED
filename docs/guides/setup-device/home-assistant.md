@@ -36,4 +36,4 @@ Just be sure to communicate the same way Home Assistant would.
 
 
 ## Screenshot
-![](/img/ha-settings.png)
+![](/img/web_ha-settings.png)

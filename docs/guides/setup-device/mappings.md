@@ -14,4 +14,4 @@ When uploading a new mapping file, this will overwrite all your existing mapping
 :::
 
 ## Screenshot
-![](/img/mapping-settings.png)
+![](/img/web_mapping-settings.png)
