@@ -1,6 +1,3 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import * as OpenApiPlugin from "docusaurus-plugin-openapi-docs";
-
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'PandaLED Docs',
@@ -22,20 +19,18 @@ const config = {
 
   presets: [
     [
-      'classic',
-      /** @type {import('@docusaurus/preset-classic').Options} */
-      ({
+      '@docusaurus/preset-classic',
+      {
         docs: {
           routeBasePath: '/',
           sidebarPath: './sidebars.js',
           showLastUpdateTime: true,
-          docItemComponent: "@theme/ApiItem",
         },
         blog: false,
         theme: {
           customCss: './src/css/custom.css',
         },
-      }),
+      },
     ],
   ],
 
@@ -44,9 +39,9 @@ const config = {
     ({
       image: 'img/social-card.jpg',
       colorMode: {
-        defaultMode: 'light',
+        defaultMode: 'dark',
+        respectPrefersColorScheme: false,
         disableSwitch: false,
-        respectPrefersColorScheme: true,
       },
       navbar: {
         title: 'PandaLED',
@@ -86,33 +81,29 @@ const config = {
         links: [],
         copyright: `Copyright © ${new Date().getFullYear()} PandaLED. Distributed by a <a href="https://github.com/derDeno/PandaLED/tree/main/LICENSE">CC BY-NC-SA 4.0 license.</a>`,
       },
-      prism: {
-        theme: prismThemes.github,
-        darkTheme: prismThemes.dracula,
+      mermaid: {
+        theme: { light: "neutral", dark: "forest" },
       },
     }),
 
   plugins: [
-    require.resolve('docusaurus-lunr-search'),
     [
-      'docusaurus-plugin-openapi-docs',
+      require.resolve("@easyops-cn/docusaurus-search-local"),
       {
-        id: "api",
-        docsPluginId: "classic",
-        config: {
-          petstore: {
-            specPath: "examples/petstore.yaml",
-            outputDir: "docs/petstore",
-            sidebarOptions: {
-              groupPathsBy: "tag",
-            },
-          },
-        }
+        hashed: true,
+        indexDocs: true,
+        indexBlog: false,
+        highlightSearchTermsOnTargetPage: true,
+        docsRouteBasePath: '/',
       },
-    ]
+    ],
   ],
 
-  themes: ["docusaurus-theme-openapi-docs"],
+  markdown: {
+    mermaid: true,
+  },
+
+  themes: ["@docusaurus/theme-mermaid"],
 };
 
 export default config;

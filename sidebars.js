@@ -50,6 +50,7 @@ const sidebars = {
     },
     'guides/debugging',
     'guides/led-test-page',
+    'guides/serialnumber',
   ],
 };
 
