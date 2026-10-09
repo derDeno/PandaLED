@@ -1,0 +1,953 @@
+#ifndef WEBSERVER_H
+#define WEBSERVER_H
+
+/*
+* Webserver routing and handling
+*/
+
+#include <Update.h>
+#include <nvs_flash.h>
+
+
+extern AsyncEventSource events;
+extern Preferences pref;
+extern AppConfig appConfig;
+extern EventQueue eventQueue;
+
+String newSSID;
+String newPw;
+String newBSSID;
+
+
+String processorInfo(const String &var) {
+    if (var == "TEMPLATE_MAC") {
+        return WiFi.macAddress();
+
+    } else if (var == "TEMPLATE_IP") {
+        return WiFi.localIP().toString();
+
+    } else if (var == "TEMPLATE_HOSTNAME") {
+        return String(WiFi.getHostname());
+
+    } else if (var == "TEMPLATE_RSSI") {
+        return String(WiFi.RSSI());
+
+    } else if (var == "TEMPLATE_VERSION") {
+        return VERSION;
+
+    } else if (var == "TEMPLATE_VERSION_FS") {
+        return F(appConfig.versionFs);
+
+    } else if (var == "TEMPLATE_UPTIME") {
+        unsigned long uptimeMillis = millis();
+
+        unsigned long seconds = uptimeMillis / 1000;
+        unsigned long minutes = seconds / 60;
+        unsigned long hours = minutes / 60;
+        unsigned long days = hours / 24;
+
+        seconds = seconds % 60;
+        minutes = minutes % 60;
+        hours = hours % 24;
+
+        String uptime = String(days) + " days " + String(hours) + "h " + (minutes < 10 ? "0" : "") + String(minutes) + "min " + (seconds < 10 ? "0" : "") + String(seconds) + "s";
+        return uptime;
+
+    } else if (var == "TEMPLATE_LOCAL_TIME") {
+        getLocalTime(&timeinfo);
+
+        char timeStr[64];
+        strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &timeinfo);
+
+        return String(timeStr) + " UTC";
+
+    } else if (var == "TEMPLATE_SERIAL") {
+        return appConfig.serialNumber;
+
+    } else if (var == "TEMPLATE_VERSION_HW") {
+        return appConfig.hwRev;
+
+    } else if (var == "TEMPLATE_WIFI_ICON") {
+
+        if(WiFi.RSSI() > -50) {
+            return String("assets/img/wifi-3.svg");
+        }else if(WiFi.RSSI() > -65) {
+            return String("assets/img/wifi-2.svg");
+        }else if(WiFi.RSSI() > -80) {
+            return String("assets/img/wifi-1.svg");
+        }else {
+            return String("assets/img/wifi-0.svg");
+        }
+    }
+
+    return String();
+}
+
+String processorLogs(const String &var) {
+    if (var == "LOG_TEMPLATE") {
+        // check if logging is even active
+        bool logging = appConfig.logging;
+
+        if (!logging) {
+            return "Logging is disabled!";
+        }
+
+        File logFile = LittleFS.open("/log.txt", "r");
+        String logContent = "";
+        if (logFile) {
+            while (logFile.available()) {
+                String temp = logFile.readStringUntil('\n');
+
+                // check if string begins with E: or W: and colorize it
+                if (temp.indexOf("E: ") != -1) {
+                    logContent += "<span class='text-danger'>" + temp + "</span><br>";
+                } else if (temp.indexOf("W:") != -1) {
+                    logContent += "<span class='text-warning'>" + temp + "</span><br>";
+                } else if (temp.indexOf("MQTT:") != -1) {
+                    logContent += "<span class='text-info'>" + temp + "</span><br>";
+                } else {
+                    logContent += temp + "<br>";
+                }
+            }
+            logFile.close();
+        } else {
+            logContent = "Log file not found!";
+        }
+        return logContent;
+    }
+
+    // Return an empty string if the placeholder is unknown
+    return String();
+}
+
+
+void handleUploadRestore(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+    if (!index) {
+        request->_tempFile = LittleFS.open("/" + filename, "w", true);
+    }
+
+    if (len) {
+        request->_tempFile.write(data, len);
+    }
+
+    if (final) {
+        request->_tempFile.close();
+
+        File backupFile = LittleFS.open("/" + filename, "r");
+        String backupContent = "";
+        if (backupFile) {
+            while (backupFile.available()) {
+                backupContent += backupFile.readString();
+            }
+            backupFile.close();
+        }
+
+        JsonDocument doc;
+        deserializeJson(doc, backupContent);
+
+        // device settings
+        JsonObject device = doc["device"];
+        const char *name = device["name"];
+        const bool wled = device["wled"];
+        const uint8_t count = device["count"];
+        const char *order = device["order"];
+        const bool analog = device["analog"];
+        const uint8_t mode = device["mode"];
+        const bool sw = device["switch"];
+        const uint8_t action = device["action"];
+        const bool logging = device["logging"];
+
+        pref.begin("deviceSettings");
+        pref.putString("name", name);
+        pref.putBool("wled", wled);
+        pref.putInt("count", count);
+        pref.putString("order", order);
+        pref.putBool("analog", analog);
+        pref.putInt("mode", mode);
+        pref.putBool("sw", sw);
+        pref.putInt("action", action);
+        pref.putBool("logging", logging);
+        pref.end();
+
+        // printer settings
+        JsonObject printer = doc["printer"];
+        const bool isX1 = doc["isX1"];
+        const char *ip = printer["ip"];
+        const char *ac = printer["ac"];
+        const char *sn = printer["sn"];
+        const bool rtid = printer["rtid"];
+        const uint8_t rtsb = printer["rtsb"];
+
+        pref.begin("printerSettings");
+        pref.putBool("isX1", isX1);
+        pref.putString("ip", ip);
+        pref.putString("ac", ac);
+        pref.putString("sn", sn);
+        pref.putBool("rtid", rtid);
+        pref.putInt("rtsb", rtsb);
+        pref.end();
+
+        // ha settings
+        JsonObject ha = doc["ha"];
+        const bool haSet = ha["activate"];
+        const char *haIp = ha["ip"];
+        const uint16_t haPort = ha["port"];
+        const char *haUser = ha["user"];
+        const char *haPass = ha["pass"];
+
+        pref.begin("haSettings");
+        pref.putBool("activate", haSet);
+        pref.putString("ip", haIp);
+        pref.putInt("port", haPort);
+        pref.putString("user", haUser);
+        pref.putString("pass", haPass);
+        pref.end();
+
+        // wifi settings
+        JsonObject wifi = doc["wifi"];
+        bool setup = wifi["setup"];
+        const char *ssid = wifi["ssid"];
+        const char *pw = wifi["pw"];
+
+        pref.begin("wifi");
+        pref.putBool("setup", true);
+        pref.putString("ssid", ssid);
+        pref.putString("pw", pw);
+        pref.end();
+
+
+        LittleFS.remove("/" + filename);
+        delay(500);
+        ESP.restart();
+    }
+}
+
+void handleOtaFw(AsyncWebServerRequest *request, const String &filename, size_t index, uint8_t *data, size_t len, bool final) {
+    static size_t totalSize = 0;
+
+    if (index == 0) {
+        logger("W:  OTA Firmware update start: " + filename);
+
+        if (!Update.begin(request->contentLength())) {
+            Update.printError(Serial);
+            return;
+        }
+
+        totalSize = 0;
+    }
+
+    if (!Update.hasError() && len > 0) {
+        if (Update.write(data, len) != len) {
+            Update.printError(Serial);
+
+        } else {
+            totalSize += len;
+            int progress = (totalSize * 100) / request->contentLength();
+            Serial.println("OTA Firmware progress: " + String(progress) + "%");
+            events.send(String(progress).c_str(), "ota-progress", millis());
+        }
+    }
+
+    if (final) {
+        if (Update.end(true)) {
+            String msg = "Firmware update success: " + String(index + len) + "bytes written";
+            logger(msg);
+            events.send("100", "ota-progress", millis());
+
+        } else {
+            Update.printError(Serial);
+            events.send("error", "ota-progress", millis());
+        }
+    }
+}
+
+void handleOtaFs(AsyncWebServerRequest *request, const String &filename, size_t index, uint8_t *data, size_t len, bool final) {
+    static size_t totalSize = 0;
+
+    if (index == 0) {
+        logger("W:  OTA Filesystem update start: " + filename);
+
+        if (!Update.begin(0x200000, U_SPIFFS)) {
+            Update.printError(Serial);
+            return;
+        }
+
+        totalSize = 0;
+    }
+
+    if (!Update.hasError() && len > 0) {
+        if (Update.write(data, len) != len) {
+            Update.printError(Serial);
+
+        } else {
+            totalSize += len;
+            int progress = (totalSize * 100) / request->contentLength();
+            Serial.println("OTA Filesystem progress: " + String(progress) + "%");
+            events.send(String(progress).c_str(), "ota-progress", millis());
+        }
+    }
+
+    if (final) {
+        if (Update.end(true)) {
+            String msg = "Filesystem update success: " + String(index + len) + "bytes written";
+            logger(msg);
+            events.send("100", "ota-progress", millis());
+
+        } else {
+            Update.printError(Serial);
+            events.send("error", "ota-progress", millis());
+        }
+    }
+}
+
+
+
+void setupSettingsRoutes(AsyncWebServer &server) {
+    server.on("/api/settings/device", HTTP_GET, [](AsyncWebServerRequest *request) {
+        AsyncResponseStream *response = request->beginResponseStream("application/json");
+        JsonDocument doc;
+        doc["name"] = appConfig.name;
+        doc["wled"] = appConfig.wled;
+        doc["count"] = appConfig.count;
+        doc["order"] = appConfig.order;
+        doc["analog"] = appConfig.analog;
+        doc["mode"] = appConfig.mode;
+        doc["switch"] = appConfig.sw;
+        doc["action"] = appConfig.action;
+        doc["logging"] = appConfig.logging;
+        serializeJson(doc, *response);
+        request->send(response);
+    });
+
+    server.on("/api/settings/device", HTTP_POST, [](AsyncWebServerRequest *request) {
+        pref.begin("deviceSettings");
+
+        if (request->hasParam("name", true)) {
+            const String name = request->getParam("name", true)->value();
+            pref.putString("name", name);
+        }
+
+        if (request->hasParam("wled", true)) {
+            const String val = request->getParam("wled", true)->value();
+
+            bool wled = false;
+            if (val == "true" || val == "1") {
+                wled = true;
+            }
+
+            pref.putBool("wled", wled);
+        }
+
+        if (request->hasParam("count", true)) {
+            const uint8_t count = request->getParam("count", true)->value().toInt();
+            pref.putInt("count", count);
+        }
+
+        if (request->hasParam("order", true)) {
+            const String order = request->getParam("order", true)->value();
+            pref.putString("order", order);
+        }
+
+        if (request->hasParam("analog", true)) {
+            const String val = request->getParam("analog", true)->value();
+
+            bool analog = false;
+            if (val == "true" || val == "1") {
+                analog = true;
+            }
+
+            pref.putBool("analog", analog);
+        }
+
+        if (request->hasParam("mode", true)) {
+            const uint8_t mode = request->getParam("mode", true)->value().toInt();
+            pref.putInt("mode", mode);
+        }
+
+        if (request->hasParam("switch", true)) {
+            const String val = request->getParam("switch", true)->value();
+
+            bool sw = false;
+            if (val == "true" || val == "1") {
+                sw = true;
+            }
+
+            pref.putBool("sw", sw);
+        }
+
+        if (request->hasParam("action", true)) {
+            const uint8_t action = request->getParam("action", true)->value().toInt();
+            pref.putInt("action", action);
+        }
+
+        if (request->hasParam("logging", true)) {
+            const String val = request->getParam("logging", true)->value();
+
+            bool logging = false;
+            if (val == "true" || val == "1") {
+                logging = true;
+            }
+
+            pref.putBool("logging", logging);
+            Serial.println("Logging: " + String(logging));
+
+            // if loggging is set to false delete the existing file
+            if (!logging) {
+                deleteLogFile();
+            }
+        }
+
+        pref.end();
+
+        request->send(200, "application/json", "{\"status\":\"saved\"}");
+        request->onDisconnect([]() {
+            delay(100);
+            ESP.restart();
+        });
+
+        // delay(2500);
+        // ESP.restart();
+    });
+
+    server.on("/api/settings/printer", HTTP_GET, [](AsyncWebServerRequest *request) {
+        AsyncResponseStream *response = request->beginResponseStream("application/json");
+        JsonDocument doc;
+        doc["isX1"] = appConfig.isX1;
+        doc["ip"] = appConfig.ip;
+        doc["ac"] = appConfig.ac;
+        doc["sn"] = appConfig.sn;
+        doc["rtid"] = appConfig.rtid;
+        doc["rtsb"] = appConfig.rtsb;
+
+        serializeJson(doc, *response);
+        request->send(response);
+    });
+
+    server.on("/api/settings/printer", HTTP_POST, [](AsyncWebServerRequest *request) {
+        pref.begin("printerSettings");
+
+        if (request->hasParam("isX1", true)) {
+            const String val = request->getParam("isX1", true)->value();
+            
+            bool isX1 = false;
+            if (val == "true" || val == "1") {
+                isX1 = true;
+            }
+
+            pref.putBool("isX1", isX1);
+        }
+
+        if (request->hasParam("ip", true)) {
+            const String printerIp = request->getParam("ip", true)->value();
+            pref.putString("ip", printerIp);
+        }
+
+        if (request->hasParam("ac", true)) {
+            const String accessCode = request->getParam("ac", true)->value();
+            pref.putString("ac", accessCode);
+        }
+
+        if (request->hasParam("sn", true)) {
+            const String sn = request->getParam("sn", true)->value();
+            pref.putString("sn", sn);
+        }
+
+        if (request->hasParam("rtid", true)) {
+            const String val = request->getParam("rtid", true)->value();
+
+            bool rtid = false;
+            if (val == "true" || val == "1") {
+                rtid = true;
+            }
+            pref.putBool("rtid", rtid);
+        }
+
+        if (request->hasParam("rtsb", true)) {
+            const int returnToStandBy = request->getParam("rtsb", true)->value().toInt();
+            pref.putInt("rtsb", returnToStandBy);
+        }
+
+        pref.end();
+
+        request->send(200, "application/json", "{\"status\":\"saved\"}");
+        request->onDisconnect([]() {
+            delay(100);
+            ESP.restart();
+        });
+    });
+
+    server.on("/api/settings/ha", HTTP_GET, [](AsyncWebServerRequest *request) {
+        AsyncResponseStream *response = request->beginResponseStream("application/json");
+        JsonDocument doc;
+        doc["activate"] = appConfig.haSet;
+        doc["ip"] = appConfig.haIp;
+        doc["port"] = appConfig.haPort;
+        doc["user"] = appConfig.haUser;
+        doc["pass"] = appConfig.haPass;
+
+        serializeJson(doc, *response);
+        request->send(response);
+    });
+
+    server.on("/api/settings/ha", HTTP_POST, [](AsyncWebServerRequest *request) {
+        pref.begin("haSettings");
+
+        if (request->hasParam("activate", true)) {
+            const String val = request->getParam("activate", true)->value();
+
+            bool activate = false;
+            if (val == "true" || val == "1") {
+                activate = true;
+            }
+            pref.putBool("activate", activate);
+        }
+
+        if (request->hasParam("ip", true)) {
+            const String haIp = request->getParam("ip", true)->value();
+            pref.putString("ip", haIp);
+        }
+
+        if (request->hasParam("port", true)) {
+            const int port = request->getParam("port", true)->value().toInt();
+            pref.putInt("port", port);
+        }
+
+        if (request->hasParam("user", true)) {
+            const String user = request->getParam("user", true)->value();
+            pref.putString("user", user);
+        }
+
+        if (request->hasParam("pass", true)) {
+            const String pass = request->getParam("pass", true)->value();
+            pref.putString("pass", pass);
+        }
+
+        pref.end();
+
+        request->send(200, "application/json", "{\"status\":\"saved\"}");
+        request->onDisconnect([]() {
+            delay(100);
+            ESP.restart();
+        });
+    });
+
+    server.on("/api/test/printer", HTTP_GET, [](AsyncWebServerRequest *request) {
+        // check if already connected
+        bool connected = mqttClient.connected();
+        if (connected) {
+            request->send(200, "application/json", "{\"status\":\"success\"}");
+            return;
+        }
+
+        if (mqttReconnect() == 1) {
+            request->send(200, "application/json", "{\"status\":\"success\"}");
+        } else {
+            request->send(200, "application/json", "{\"status\":\"failed\"}");
+        }
+    });
+
+    server.on("/api/test/ha", HTTP_GET, [](AsyncWebServerRequest *request) {
+        // check if already connected
+        bool connected = mqttClientHa.connected();
+        if (connected) {
+            request->send(200, "application/json", "{\"status\":\"success\"}");
+            return;
+        }
+
+        if (mqttHaReconnect() == 1) {
+            request->send(200, "application/json", "{\"status\":\"success\"}");
+        } else {
+            request->send(200, "application/json", "{\"status\":\"failed\"}");
+        }
+    });
+
+    server.on("/api/wifi/change", HTTP_POST, [](AsyncWebServerRequest *request) {
+        logger("WiFI switch initiated.");
+
+        if (request->hasParam("ssid", true)) {
+            newSSID = request->getParam("ssid", true)->value();
+        }
+
+        if (request->hasParam("pw", true)) {
+            newPw = request->getParam("pw", true)->value();
+        }
+
+        if (request->hasParam("bssid", true)) {
+            newBSSID = request->getParam("bssid", true)->value();
+        }
+
+        // Create the response
+        request->send(200, "application/json", "{\"status\":\"initiated\"}");
+
+        request->onDisconnect([]() {
+            delay(100);
+            if (newSSID.length() > 0 && newPw.length() > 0) {
+                changeWifi(newSSID, newPw);
+            }
+        });
+    });
+
+    server.on("/api/wifi/scan", HTTP_GET, [](AsyncWebServerRequest *request) {
+        scanNetworkLoop();
+
+        request->send(200, "application/json", "{\"status\":\"Scan started\"}");
+        Serial.println("WiFi scan started");
+    });
+}
+
+void setupMappingRoutes(AsyncWebServer &server) {
+    server.on("/api/mappings", HTTP_GET, [](AsyncWebServerRequest *request) {
+        pref.begin("mappings");
+
+        nvs_iterator_t it = nvs_entry_find(NULL, "mappings", NVS_TYPE_ANY);
+        if (it == NULL) {
+            Serial.println("No entries found");
+            request->send(404, "application/json", "{\"status\":\"no mappings found!\"}");
+            return;
+        }
+
+        const size_t maxKeys = 256;
+        String keysArray[maxKeys];
+        size_t keyCount = 0;
+
+        while (it != NULL && keyCount < maxKeys) {
+            nvs_entry_info_t info;
+            nvs_entry_info(it, &info);
+            it = nvs_entry_next(it);
+
+            keysArray[keyCount] = String(info.key);
+            Serial.println("Found key: " + keysArray[keyCount]);
+            keyCount++;
+        }
+
+        nvs_release_iterator(it);
+
+        // iterate over keys and get values
+        AsyncResponseStream *response = request->beginResponseStream("application/json");
+        JsonDocument doc;
+        JsonArray mappings = doc["mappings"].to<JsonArray>();
+
+        for (size_t i = 0; i < keyCount; i++) {
+            JsonObject mapping = mappings.add<JsonObject>();
+            mapping["id"] = keysArray[i];
+            mapping["value"] = pref.getString(keysArray[i].c_str(), "");
+        }
+
+        pref.end();
+        serializeJson(doc, *response);
+        request->send(response);
+    });
+
+    server.on("/api/mappings", HTTP_POST, [](AsyncWebServerRequest *request) {
+
+    });
+
+    server.on("/api/mappings", HTTP_DELETE, [](AsyncWebServerRequest *request) {
+        if (request->hasParam("id")) {
+            int id = request->getParam("id")->value().toInt();
+
+            pref.begin("mappings");
+            pref.remove(String(id).c_str());
+            pref.end();
+
+            request->send(200, "application/json", "{\"status\":\"deleted\"}");
+        }
+    });
+
+    server.on("/api/mappings-upload", HTTP_POST, [](AsyncWebServerRequest *request) {
+
+    });
+
+    server.on("/api/mappings-download", HTTP_GET, [](AsyncWebServerRequest *request) {
+
+    });
+
+    server.on("/api/test-mapping", HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (request->hasParam("id")) {
+            int id = request->getParam("id")->value().toInt();
+
+            pref.begin("mappings");
+            String value = pref.getString(String(id).c_str(), "");
+            pref.end();
+
+            // fire the action part of the mapping
+
+            request->send(200, "application/json", "{\"status\":\"success\",\"value\":\"" + value + "\"}");
+        }
+    });
+}
+
+void setupFileRoutes(AsyncWebServer &server) {
+    server.on("/api/backup", HTTP_GET, [](AsyncWebServerRequest *request) {
+        // wifi settings
+        pref.begin("wifi", true);
+        bool setup = pref.getBool("setup", false);
+        String ssid = pref.getString("ssid", "");
+        String pw = pref.getString("pw", "");
+        pref.end();
+
+        AsyncResponseStream *response = request->beginResponseStream("application/json");
+        JsonDocument doc;
+
+        JsonObject device = doc["device"].to<JsonObject>();
+        device["wled"] = appConfig.wled;
+        device["count"] = appConfig.count;
+        device["order"] = appConfig.order;
+        device["analog"] = appConfig.analog;
+        device["mode"] = appConfig.mode;
+        device["switch"] = appConfig.sw;
+        device["action"] = appConfig.action;
+        device["logging"] = appConfig.logging;
+
+        JsonObject printer = doc["printer"].to<JsonObject>();
+        printer["isX1"] = appConfig.isX1;
+        printer["ip"] = appConfig.ip;
+        printer["ac"] = appConfig.ac;
+        printer["sn"] = appConfig.sn;
+        printer["rtid"] = appConfig.rtid;
+        printer["rtsb"] = appConfig.rtsb;
+
+        JsonObject ha = doc["ha"].to<JsonObject>();
+        ha["activate"] = appConfig.haSet;
+        ha["ip"] = appConfig.haIp;
+        ha["port"] = appConfig.haPort;
+        ha["user"] = appConfig.haUser;
+        ha["pass"] = appConfig.haPass;
+
+        JsonObject wifi = doc["wifi"].to<JsonObject>();
+        wifi["setup"] = setup;
+        wifi["ssid"] = ssid;
+        wifi["pw"] = pw;
+
+        serializeJson(doc, *response);
+        response->addHeader("Content-Disposition", "attachment; filename=\"backup.pandaled\"");
+        request->send(response);
+    });
+
+    server.on("/api/backup", HTTP_POST, [](AsyncWebServerRequest *request) { request->send(200); }, handleUploadRestore);
+
+    server.on("/api/ota/fw", HTTP_POST, [](AsyncWebServerRequest *request) { 
+    if(Update.hasError()) {
+        request->send(500, "text/plain", "OTA Firmware update failed! Check Logs for details.");
+
+      }else {
+
+        logger("OTA Firmware update complete, rebooting...");
+
+        AsyncWebServerResponse *response = request->beginResponse(200, "text/plain", "OTA Firmware update successful! Rebooting...");
+        response->addHeader("Connection", "close");
+        request->send(response);
+
+        request->onDisconnect([]() {
+          delay(2000);
+          ESP.restart();
+        });
+      } }, handleOtaFw);
+
+    server.on("/api/ota/fs", HTTP_POST, [](AsyncWebServerRequest *request) { 
+    if(Update.hasError()) {
+        request->send(500, "text/plain", "OTA Filesystem update failed! Check Logs for details.");
+
+      }else {
+
+        logger("OTA Filesystem update complete, rebooting...");
+
+        AsyncWebServerResponse *response = request->beginResponse(200, "text/plain", "OTA Filesystem update successful! Rebooting...");
+        response->addHeader("Connection", "close");
+        request->send(response);
+
+        request->onDisconnect([]() {
+          delay(2000);
+          ESP.restart();
+        });
+      } }, handleOtaFs);
+}
+
+void setupApiRoutes(AsyncWebServer &server) {
+    server.on("/api/info", HTTP_GET, [](AsyncWebServerRequest *request) {
+        AsyncResponseStream *response = request->beginResponseStream("application/json");
+        JsonDocument doc;
+        doc["mac"] = WiFi.macAddress();
+        doc["ip"] = WiFi.localIP().toString();
+        doc["hostname"] = WiFi.getHostname();
+        doc["rssi"] = WiFi.RSSI();
+        doc["version_fw"] = VERSION;
+        doc["version_fs"] = appConfig.versionFs;
+        doc["version_hw"] = appConfig.hwRev;
+        doc["sn"] = appConfig.serialNumber;
+        doc["uptime"] = millis();
+
+        serializeJson(doc, *response);
+        request->send(response);
+    });
+
+    server.on("/api/log-download", HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (LittleFS.exists("/log.txt")) {
+            request->send(LittleFS, "/log.txt", "text/plain", true);
+        } else {
+            request->send(404, "text/plain", "Log file not found!");
+        }
+    });
+
+    server.on("/api/log-delete", HTTP_POST, [](AsyncWebServerRequest *request) {
+        deleteLogFile();
+        request->redirect("/log");
+    });
+
+    server.on("/api/reset", HTTP_POST, [](AsyncWebServerRequest *request) {
+        logger("W:  Factory reset by user requested");
+
+        nvs_flash_erase();
+        nvs_flash_init();
+
+        request->redirect("/");
+
+        request->onDisconnect([]() {
+            delay(100);
+            ESP.restart();
+        });
+    });
+
+    server.on("/api/reboot", HTTP_POST, [](AsyncWebServerRequest *request) {
+        logger("W:  Reboot by user requested");
+        request->send(200, "application/json", "{\"status\":\"rebooting\"}");
+
+        request->onDisconnect([]() {
+            delay(100);
+            ESP.restart();
+        });
+    });
+
+    server.on("/api/color", HTTP_POST, [](AsyncWebServerRequest *request) {
+        String color = "#FF0000";
+        uint8_t output = 0;
+        uint8_t brightness = 255;
+        bool invert = false;
+        int invertDelay = 0;
+        bool blink = false;
+        int blinkDelay = 0;
+        int blinkCount = 0;
+        bool turnOff = false;
+        bool rainbow = false;
+
+        if (request->hasParam("color", true)) {
+            color = request->getParam("color", true)->value();
+        }
+
+        if (request->hasParam("output", true)) {
+            output = request->getParam("output", true)->value().toInt();
+        }
+
+        if (request->hasParam("brightness", true)) {
+            brightness = request->getParam("brightness", true)->value().toInt();
+        }
+
+        if (request->hasParam("blink", true)) {
+            blink = true;
+        }
+
+        if (request->hasParam("blink_delay", true)) {
+            blinkDelay = request->getParam("blink_delay", true)->value().toInt();
+        }
+
+        if (request->hasParam("turn_off", true)) {
+            turnOff = true;
+        }
+
+        if (request->hasParam("rainbow", true)) {
+            rainbow = true;
+        }
+
+        if (turnOff) {
+            EventOutput event;
+            event.isOn = false;
+
+            if (output == 1) {
+                event.type = WLED_CHANGE;
+            } else {
+                event.type = ANALOG_CHANGE;
+            }
+
+            eventQueue.push(event);
+
+        } else if (rainbow) {
+            if (output == 1) {
+                EventOutput event;
+                event.type = WLED_RAINBOW;
+                event.brightness = brightness;
+                eventQueue.push(event);
+            }
+
+        } else {
+            const char* hexColor = color.c_str() + 1;
+            unsigned long colorValue = strtoul(hexColor, NULL, 16);
+            uint8_t r = (colorValue >> 16) & 0xFF;
+            uint8_t g = (colorValue >> 8) & 0xFF;
+            uint8_t b = colorValue & 0xFF;
+
+            EventOutput event;
+            event.isOn = true;
+            event.r = r;
+            event.g = g;
+            event.b = b;
+            event.brightness = brightness;
+            event.blink = blink;
+            event.blinkDelay = blinkDelay;
+            event.blinkCount = blinkCount;
+
+            if (output == 1) {
+                event.type = WLED_CHANGE;                
+            } else if (output == 2) {
+                event.type = ANALOG_CHANGE;
+            }
+
+            eventQueue.push(event);
+        }
+
+        request->send(200, "application/json", "{\"status\":\"ok\"}");
+    });
+}
+
+
+// Routing here
+void routing(AsyncWebServer &server) {
+
+    setupMappingRoutes(server);
+    setupSettingsRoutes(server);
+    setupApiRoutes(server);
+    setupFileRoutes(server);
+
+    // map requests to static files
+    server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html").setFilter(ON_STA_FILTER);
+    server.serveStatic("/", LittleFS, "/captive.html").setFilter(ON_AP_FILTER);
+    server.serveStatic("/settings", LittleFS, "/settings/").setDefaultFile("index.html");
+
+    server.onNotFound([](AsyncWebServerRequest *request) {
+        String path = request->url();
+        
+        if (!path.endsWith(".html") && path.indexOf(".") == -1) {
+            path += ".html";
+        }
+
+        if (LittleFS.exists(path)) {
+
+            // check for info and log for processing content
+            if (path == "/info.html") {
+                request->send(LittleFS, path, String(), false, processorInfo);
+                return;
+            }
+
+            if (path == "/log.html") {
+                request->send(LittleFS, path, String(), false, processorLogs);
+                return;
+            }
+
+
+            request->send(LittleFS, path, String(), false);
+        } else {
+            request->send(LittleFS, "/404.html", String(), false);
+        }
+    });
+}
+
+#endif
